@@ -42,7 +42,7 @@ exports.isUrlInList = function(url, callback) {
 // checks if url is in read sites.txt
   var listData = [];
   var whatIsThis = exports.readListOfUrls(function (data) {   
-   console.log(JSON.stringify(data));
+   console.log(data.split('\n').slice(0, -1));
     
   });
   callback(JSON.stringify(whatIsThis) + '--------');
