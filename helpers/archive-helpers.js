@@ -40,17 +40,39 @@ exports.readListOfUrls = function(callback) {
 
 exports.isUrlInList = function(url, callback) {
 
-  exports.readListOfUrls(function (data) {   
-    callback(data.some( x => x === url.substring(1)));
+  exports.readListOfUrls(function (data) {
+    if (url[0] === '/') {
+      callback(data.some( x => x === url.substring(1)));
+    } else {
+      callback(data.some( x => x === url));
+    }
   });
 };
 
 exports.addUrlToList = function(url, callback /* load loading.html */) {
 // add url to site.text
+  exports.readListOfUrls(function(data) {
+    data.push(url);
+    fs.writeFile(exports.paths.list, data.join('\n'));
+    callback();
+  });
+
 };
 
 exports.isUrlArchived = function(url, callback) {
 // check if site.html exist in sites folder
+console.log(url)
+  fs.access(`${exports.paths.archivedSites + url}.html`, (err) => {
+  var exist = true;
+    if (err) { /// only running when there is an error need ot fix that
+      if (err.code === 'ENOENT') {
+        exist = false;
+      }
+    }
+console.log(exist);
+  callback(exist);
+  });
+
 };
 
 exports.downloadUrls = function(urls) {
