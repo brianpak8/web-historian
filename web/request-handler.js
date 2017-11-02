@@ -16,11 +16,11 @@ exports.handleRequest = function (req, res) {
   }
     
 
-   if (req.method === 'GET' & req.url === '/') {
+  if (req.method === 'GET' & req.url === '/') {
     httpHelpers.serveAssets(res, req.url, function(err, data) {
       if (err) {
         res.statusCode = 500;
-        res.end(`Error getting the file ${indexPath}`);
+        res.end(`Error getting the file ${req.url}`);
       } else {
         res.writeHead(200, httpHelpers.headers);
         res.end(data);

@@ -31,21 +31,18 @@ exports.readListOfUrls = function(callback) {
     if (err) {
       console.log(err, 'HEEEEEELOOOOO');
     } else {
-      callback(data);
+      var arr = data.split('\n');
+      callback(arr);
     }    
   }); 
 
 };
 
 exports.isUrlInList = function(url, callback) {
-  // console.log(url)
-// checks if url is in read sites.txt
-  var listData = [];
-  var whatIsThis = exports.readListOfUrls(function (data) {   
-   console.log(data.split('\n').slice(0, -1));
-    
+
+  exports.readListOfUrls(function (data) {   
+    callback(data.some( x => x === url.substring(1)));
   });
-  callback(JSON.stringify(whatIsThis) + '--------');
 };
 
 exports.addUrlToList = function(url, callback /* load loading.html */) {
