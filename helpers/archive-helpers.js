@@ -1,7 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
-
+var request = require('request');
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
  * Consider using the `paths` object below to store frequently used file paths. This way,
@@ -67,29 +67,37 @@ exports.isUrlArchived = function(url, callback) {
     }
     for (var file of files) {
       if (file === url) {
-        return callback(true);
+        return callback(true, url);
       }
     }
-    callback(false);
+    callback(false, url);
   });
-// check if site.html exist in sites folder
-// console.log(url)
-//   fs.access(`${exports.paths.archivedSites + url}.html`, (err) => {
-//   var exist = true;
-//     if (err) { /// only running when there is an error need ot fix that
-//       if (err.code === 'ENOENT') {
-//         callback(false);
-//       }
-//     } else {
-//         callback(true);
-//       }
-// // console.log('____________')
-// // console.log(exist);
-// //   callback(exist);
-//   });
+
 
 };
 
 exports.downloadUrls = function(urls) {
+  console.log('beginnngi');
 // download html from external website and save it in sites folder
+  for (var url of urls) {
+    exports.isUrlArchived(url, function(boolean, link) {
+console.log('IS URL archived callback');
+console.log(boolean)
+      if (boolean) {
+console.log('before request after boolean check');
+        request(`http://${link}`, function (err, res, body) {
+    console.log('request sent');
+          if (res.statusCode === 200) {
+    console.log('HEOLLOLEw')
+            fs.writeFile(`${exports.paths.archivedSites}${link}.html`, body);
+            console.log(fs.readFile(`${exports.paths.archivedSites}${link}.html`));
+          }
+        
+        });
+      }
+
+
+    });
+  }
+  
 };

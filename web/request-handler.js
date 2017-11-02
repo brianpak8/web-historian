@@ -9,14 +9,27 @@ exports.handleRequest = function (req, res) {
   // console.log(req.url, 'URL');
   // console.log(archive.paths.archivedSites, '/www.google.com.html?');
  
-  if (req.url !== '/') {
+  if (req.methond === 'GET' && req.url !== '/') {
     archive.isUrlInList(req.url, function (boolean) {
-      console.log(boolean, 'isUrlInList');
+      if (boolean) {
+        httpHelpers.serveAssets(res, req.url, function(err, data) {
+          if (err) {
+            res.statusCode = 500;
+            res.end(`Error getting the file ${req.url}`);
+          } else {
+            res.writeHead(200, httpHelpers.headers);
+            res.end(data);
+          }
+        });
+      }
+
+
+
     });
   }
     
 
-  if (req.method === 'GET' & req.url === '/') {
+  if (req.method === 'GET' && req.url === '/') {
     httpHelpers.serveAssets(res, req.url, function(err, data) {
       if (err) {
         res.statusCode = 500;
@@ -27,7 +40,7 @@ exports.handleRequest = function (req, res) {
       }
     });
   }
-
+  
 
 
 
