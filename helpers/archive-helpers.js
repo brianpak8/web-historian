@@ -26,16 +26,36 @@ exports.initialize = function(pathsObj) {
 // modularize your code. Keep it clean!
 
 exports.readListOfUrls = function(callback) {
+// reads site.txt
+  fs.readFile(exports.paths.list, 'utf8', function (err, data) {
+    if (err) {
+      console.log(err, 'HEEEEEELOOOOO');
+    } else {
+      callback(data);
+    }    
+  }); 
+
 };
 
 exports.isUrlInList = function(url, callback) {
+  // console.log(url)
+// checks if url is in read sites.txt
+  var listData = [];
+  var whatIsThis = exports.readListOfUrls(function (data) {   
+   console.log(JSON.stringify(data));
+    
+  });
+  callback(JSON.stringify(whatIsThis) + '--------');
 };
 
-exports.addUrlToList = function(url, callback) {
+exports.addUrlToList = function(url, callback /* load loading.html */) {
+// add url to site.text
 };
 
 exports.isUrlArchived = function(url, callback) {
+// check if site.html exist in sites folder
 };
 
 exports.downloadUrls = function(urls) {
+// download html from external website and save it in sites folder
 };

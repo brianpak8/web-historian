@@ -6,11 +6,18 @@ var httpHelpers = require('./http-helpers.js');
 
 
 exports.handleRequest = function (req, res) {
+  // console.log(req.url, 'URL');
+  // console.log(archive.paths.archivedSites, '/www.google.com.html?');
+ 
+  if (req.url !== '/') {
+    archive.isUrlInList(req.url, function (boolean) {
+      console.log(boolean, 'isUrlInList');
+    });
+  }
+    
 
-  if (req.method === 'GET') {
-    var indexPath = archive.paths.siteAssets.concat('/index.html');
-
-    httpHelpers.serveAssets(res, indexPath, function(err, data) {
+   if (req.method === 'GET' & req.url === '/') {
+    httpHelpers.serveAssets(res, req.url, function(err, data) {
       if (err) {
         res.statusCode = 500;
         res.end(`Error getting the file ${indexPath}`);
