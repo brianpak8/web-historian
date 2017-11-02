@@ -60,18 +60,33 @@ exports.addUrlToList = function(url, callback /* load loading.html */) {
 };
 
 exports.isUrlArchived = function(url, callback) {
-// check if site.html exist in sites folder
-console.log(url)
-  fs.access(`${exports.paths.archivedSites + url}.html`, (err) => {
-  var exist = true;
-    if (err) { /// only running when there is an error need ot fix that
-      if (err.code === 'ENOENT') {
-        exist = false;
+
+  fs.readdir(exports.paths.archivedSites, (err, files) => {
+    if (err) {
+      console.log('error', err);
+    }
+    for (var file of files) {
+      if (file === url) {
+        return callback(true);
       }
     }
-console.log(exist);
-  callback(exist);
+    callback(false);
   });
+// check if site.html exist in sites folder
+// console.log(url)
+//   fs.access(`${exports.paths.archivedSites + url}.html`, (err) => {
+//   var exist = true;
+//     if (err) { /// only running when there is an error need ot fix that
+//       if (err.code === 'ENOENT') {
+//         callback(false);
+//       }
+//     } else {
+//         callback(true);
+//       }
+// // console.log('____________')
+// // console.log(exist);
+// //   callback(exist);
+//   });
 
 };
 
