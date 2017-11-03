@@ -78,24 +78,4 @@ exports.handleRequest = function (req, res) {
       }
     });
   }
-
-  if (req.method === 'POST') {
-    archive.isUrlInList(link, function() {
-      
-    })
-  }
-  
-
-
-
-
-
-
-
-
-
-
-
-//  USE BELOW LATER
-//res.end(archive.paths.list);
 };
