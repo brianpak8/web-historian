@@ -17,10 +17,10 @@ exports.serveAssets = function(res, asset, callback) {
   var filePath = '';
   if (asset === '/') {
     filePath = archive.paths.siteAssets.concat('/index.html');
+  } else if (asset === '/loading.html') { 
+    filePath = archive.paths.siteAssets.concat('/loading.html');
   } else {
-    console.log('---------------------')
     filePath = `${archive.paths.archivedSites + '/' + asset}`;
-    console.log(filePath)
   }
 
   fs.readFile(filePath, 'utf8', callback);
