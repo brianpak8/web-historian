@@ -1,66 +1,75 @@
 var fs = require('fs');
 var path = require('path');
-var _ = require('underscore');
 var request = require('request');
+var _ = require('underscore');
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
  * Consider using the `paths` object below to store frequently used file paths. This way,
  * if you move any files, you'll only need to change your code in one place! Feel free to
  * customize it in any way you wish.
  */
-
 exports.paths = {
   siteAssets: path.join(__dirname, '../web/public'),
   archivedSites: path.join(__dirname, '../archives/sites'),
   list: path.join(__dirname, '../archives/sites.txt')
 };
-
 // Used for stubbing paths for tests, do not modify
 exports.initialize = function(pathsObj) {
   _.each(pathsObj, function(path, type) {
     exports.paths[type] = path;
   });
 };
-
-// The following function names are provided to you to suggest how you might
-// modularize your code. Keep it clean!
-
 exports.readListOfUrls = function(callback) {
-// reads site.txt
-  fs.readFile(exports.paths.list, 'utf8', function (err, data) {
+  // fs.readFile(exports.paths.list, function(err, sites) {
+  //   sites = sites.toString().split('\n');
+  //   if (callback) {
+  //     callback(sites);
+  //   }
+  // });
+  fs.readFile(exports.paths.list, 'utf8', function(err, data) {
     if (err) {
-      console.log(err, 'HEEEEEELOOOOO');
+      console.log(err);
     } else {
       var arr = data.split('\n');
       callback(arr);
-    }    
-  }); 
-
-};
-
-exports.isUrlInList = function(url, callback) {
-
-  exports.readListOfUrls(function (data) {
-    if (url[0] === '/') {
-      callback(data.some( x => x === url.substring(1)));
-    } else {
-      callback(data.some( x => x === url));
     }
   });
 };
-
-exports.addUrlToList = function(url, callback /* load loading.html */) {
-// add url to site.text
+exports.isUrlInList = function(url, callback) {
+  // exports.readListOfUrls(function(sites) {
+  //   var found = _.any(sites, function(site, i) {
+  //     return site.match(url);
+  //   });
+  //   callback(found);
+  // });
   exports.readListOfUrls(function(data) {
-    data.push(url);
-    fs.writeFile(exports.paths.list, data.join('\n'));
-    callback();
+    if (url[0] === '/') {
+      callback(data.some(x => x === url.substring(1)));
+    } else {
+      callback(data.some(x => x === url));
+    }
   });
-
 };
-
+exports.addUrlToList = function(url, callback) {
+  // fs.appendFile(exports.paths.list, url + '\n', function(err, file) {
+  //   callback();
+  // });
+  exports.readListOfUrls(function(data) {
+    if (!data.some((x) => url === x)) {
+      fs.appendFile(exports.paths.list, url + '\n', function(err, file) {
+        callback();
+      });
+    } else {
+      callback();
+    }
+  });
+};
 exports.isUrlArchived = function(url, callback) {
-
+  // var sitePath = path.join(exports.paths.archivedSites, url);
+  //
+  // fs.access(sitePath, function(err) {
+  //   callback(!err);
+  // });
   fs.readdir(exports.paths.archivedSites, (err, files) => {
     if (err) {
       console.log('error', err);
@@ -72,32 +81,20 @@ exports.isUrlArchived = function(url, callback) {
     }
     callback(false, url);
   });
-
-
 };
-
 exports.downloadUrls = function(urls) {
-  console.log('beginnngi');
-// download html from external website and save it in sites folder
+  // Iterate over urls and pipe to new files
+  // _.each(urls, function(url) {
+  //   if (!url) {
+  //     return;
+  //   }
+  //   request('http://' + url).pipe(fs.createWriteStream(exports.paths.archivedSites + '/' + url));
+  // });
   for (var url of urls) {
     exports.isUrlArchived(url, function(boolean, link) {
-console.log('IS URL archived callback');
-console.log(boolean)
-      if (boolean) {
-console.log('before request after boolean check');
-        request(`http://${link}`, function (err, res, body) {
-    console.log('request sent');
-          if (res.statusCode === 200) {
-    console.log('HEOLLOLEw')
-            fs.writeFile(`${exports.paths.archivedSites}${link}.html`, body);
-            console.log(fs.readFile(`${exports.paths.archivedSites}${link}.html`));
-          }
-        
-        });
+      if (!boolean) {
+        request('http://' + link).pipe(fs.createWriteStream(exports.paths.archivedSites + '/' + link));
       }
-
-
     });
   }
-  
 };
