@@ -8,37 +8,46 @@ var httpHelpers = require('./http-helpers.js');
 exports.handleRequest = function (req, res) {
   // console.log(req.url, 'URL');
   // console.log(archive.paths.archivedSites, '/www.google.com.html?');
- 
-  if (req.methond === 'GET' && req.url !== '/') {
-    archive.isUrlInList(req.url, function (boolean) {
+  var link = req.url;
+  if (req.url[0] === '/' && link !== '/') {
+    link = link.substring(1);
+  }
+  if (req.method === 'GET' && link !== '/') {
+    console.log('first step')
+    console.log(link)
+    archive.isUrlArchived(link, function(boolean, url) {
       if (boolean) {
-        httpHelpers.serveAssets(res, req.url, function(err, data) {
+        console.log('GOT HERE!!!!!!!!!!!!!!!');
+        httpHelpers.serveAssets(res, link, function(err, data) {
           if (err) {
             res.statusCode = 500;
-            res.end(`Error getting the file ${req.url}`);
+            res.end(`Error getting the file ${link}`);
           } else {
             res.writeHead(200, httpHelpers.headers);
             res.end(data);
           }
         });
       }
-
-
-
     });
   }
     
 
-  if (req.method === 'GET' && req.url === '/') {
-    httpHelpers.serveAssets(res, req.url, function(err, data) {
+  if (req.method === 'GET' && link === '/') {
+    httpHelpers.serveAssets(res, link, function(err, data) {
       if (err) {
         res.statusCode = 500;
-        res.end(`Error getting the file ${req.url}`);
+        res.end(`Error getting the file ${link}`);
       } else {
         res.writeHead(200, httpHelpers.headers);
         res.end(data);
       }
     });
+  }
+
+  if (req.method === 'POST') {
+    archive.isUrlInList(link, function() {
+      
+    })
   }
   
 

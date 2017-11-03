@@ -18,7 +18,9 @@ exports.serveAssets = function(res, asset, callback) {
   if (asset === '/') {
     filePath = archive.paths.siteAssets.concat('/index.html');
   } else {
-    filePath = `${archive.paths.archivedSites + asset}.html`;
+    console.log('---------------------')
+    filePath = `${archive.paths.archivedSites + '/' + asset}`;
+    console.log(filePath)
   }
 
   fs.readFile(filePath, 'utf8', callback);
